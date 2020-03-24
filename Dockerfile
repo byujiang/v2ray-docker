@@ -22,7 +22,7 @@ FROM alpine:latest
 
 # V2RAY
 ENV TZ ${TZ}
-ENV V2RAY_VER v4.22.1
+ENV V2RAY_VER v4.23.0
 ENV V2RAY_URL https://github.com/v2ray/v2ray-core/releases/download/${V2RAY_VER}/v2ray-linux-64.zip
 
 WORKDIR /srv
