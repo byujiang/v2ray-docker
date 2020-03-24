@@ -35,11 +35,11 @@ RUN apk upgrade --update \
         bash \
         tzdata \
         curl \
-		openssh-client \
-		git\
-		util-linux \
-		nodejs nodejs-npm \
-	&& cd /srv/ && npm install --save \
+        openssh-client \
+        git \
+        util-linux \
+        nodejs nodejs-npm \
+    && cd /srv/ && npm install --save \
     && mkdir -p \
         /etc/log/v2ray \
         /etc/v2ray/ \
