@@ -3,11 +3,12 @@
 #
 # update to go1.13
 FROM darkshell/caddy:builder as builder
+#FROM abiosoft/caddy:builder as builder
 
-LABEL maintainer "sebs sebsclub@outlook.com"
+LABEL maintainer "Yujiang Bi byujiang@gmail.com"
 
 ### caddy version
-ARG version="1.0.4"
+ARG version="1.0.5"
 ARG plugins="git,cors,realip,expires,cache"
 ARG TZ="Asia/Shanghai"
 LABEL caddy_version="$version"
@@ -22,12 +23,11 @@ FROM alpine:latest
 
 # V2RAY
 ENV TZ ${TZ}
-ENV V2RAY_VER v4.23.0
+ENV V2RAY_VER v4.23.1
 ENV V2RAY_URL https://github.com/v2ray/v2ray-core/releases/download/${V2RAY_VER}/v2ray-linux-64.zip
 
 WORKDIR /srv
 ADD ./srv /srv
-
 
 ### nodejs v2ray git &&& openssh
 RUN apk upgrade --update \
@@ -40,6 +40,8 @@ RUN apk upgrade --update \
         util-linux \
         nodejs nodejs-npm \
     && cd /srv/ && npm install --save \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo ${TZ} > /etc/timezone \
     && mkdir -p \
         /etc/log/v2ray \
         /etc/v2ray/ \
@@ -47,17 +49,11 @@ RUN apk upgrade --update \
     && curl -L -H "Cache-Control: no-cache" -o /tmp/v2ray/v2ray.zip ${V2RAY_URL} \
     && pwd \
     && unzip /tmp/v2ray/v2ray.zip -d /tmp/v2ray/ \
-    && mv /tmp/v2ray/v2ray /usr/bin \
-    && mv /tmp/v2ray/v2ctl /usr/bin \
-    && mv /tmp/v2ray/vpoint_vmess_freedom.json /etc/v2ray/config.json \
-    && chmod +x /usr/bin/v2ray \
-    && chmod +x /usr/bin/v2ctl \
+	&& cd /tmp/v2ray && mv v2ray v2ctl /usr/bin \
+    && mv vpoint_vmess_freedom.json /etc/v2ray/config.json \
+    && chmod +x /usr/bin/v2ray /usr/bin/v2ctl \
     && apk del curl \
-    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone \
     && rm -rf /tmp/v2ray /var/cache/apk/*
-
-# ADD entrypoint.sh /entrypoint.sh
 
 # Let's Encrypt Agreement
 ENV ACME_AGREE="false"
@@ -81,4 +77,3 @@ ADD caddy.sh /caddy.sh
 
 EXPOSE 443 80
 ENTRYPOINT ["/caddy.sh"]
-# CMD ["--conf", "/etc/Caddyfile", "--log", "stdout", "--agree=$ACME_AGREE"]
