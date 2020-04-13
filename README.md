@@ -48,3 +48,6 @@ sudo docker stop v2ray
 - 2020.04.08
   * 更新 caddy:builder 到 go1.13.
   * 更新 v2ray 到 4.23.1.
+
+## 说明
+Forked from [pengchujin 的 v2rayDocker](https://github.com/pengchujin/v2rayDocker)
